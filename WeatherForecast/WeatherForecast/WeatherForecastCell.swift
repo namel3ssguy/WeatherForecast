@@ -43,7 +43,12 @@ class WeatherForecastCell: UITableViewCell {
         humidityLabel.text = "Humidity: \(humidity)%"
         let desc = weatherItem?.weather?.first?.description ?? ""
         descLabel.text = "Description: \(desc)"
-        weatherImageView.image = weatherItem?.weather?.first?.depictImage
+        if let depictImageUrl = weatherItem?.weather?.first?.depictImageUrl {
+            weatherImageView.setImage(from: depictImageUrl)
+        } else {
+            weatherImageView.image = nil
+        }
+        
         weatherImageView.accessibilityTraits = .image
         weatherImageView.isAccessibilityElement = true
         weatherImageView.accessibilityLabel =  "Weather is mainly \(weatherItem?.weather?.first?.main ?? "")"

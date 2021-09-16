@@ -49,14 +49,14 @@ struct WeatherInfo: Codable {
         return .clear
     }
     
-    var depictImage: UIImage {
+    var depictImageUrl: URL {
         switch type {
         case .clouds:
-            return UIImage(systemName: "cloud.sun")!
+            return URL(string: "https://i.ibb.co/NyQr3TS/weather-2191838-1846632.png")!
         case .rain:
-            return UIImage(systemName: "cloud.rain")!
+            return URL(string: "https://i.ibb.co/d7Kcp71/Weather-Rain-icon-1.png")!
         default:
-            return UIImage(systemName: "sun.max")!
+            return URL(string: "https://i.ibb.co/JKW1BLk/sun-2551361-2149190.png")!
         }
     }
 }
