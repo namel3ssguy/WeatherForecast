@@ -48,4 +48,11 @@ extension WeatherTarget: TargetType {
     var headers: [String : String]? {
         return ["Content-Type": "application/json"]
     }
+    
+    var sampleData: Data {
+        switch self {
+        case .getWeather(_, _, _, _):
+            return "{\"cod\": \"200\"}".data(using: .utf8)!
+        }
+    }
 }

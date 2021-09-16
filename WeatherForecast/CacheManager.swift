@@ -33,7 +33,7 @@ class CacheManager {
     }
     
     /**
-     Find the cached data file. If any, return corresponding data. Otherwise, return nil.
+     Find the cached data file. The valid file is created today. If the created day is not today, delete the file. If the valid cached file found, return corresponding data. Otherwise, return nil.
      */
     func findCachedWeatherForecastData(withCity city: String, numberOfForecaseDay: Int, units: String) -> Single<Data?> {
         return Single<Data?>.create { single in
