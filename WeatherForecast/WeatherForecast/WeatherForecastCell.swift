@@ -24,6 +24,12 @@ class WeatherForecastCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        dateLabel.useDynamicFont(forTextStyle: .body)
+        temperatureLabel.useDynamicFont(forTextStyle: .body)
+        pressureLabel.useDynamicFont(forTextStyle: .body)
+        humidityLabel.useDynamicFont(forTextStyle: .body)
+        descLabel.useDynamicFont(forTextStyle: .body)
+        
     }
     
     private func updateData() {
@@ -37,5 +43,9 @@ class WeatherForecastCell: UITableViewCell {
         humidityLabel.text = "Humidity: \(humidity)%"
         let desc = weatherItem?.weather?.first?.description ?? ""
         descLabel.text = "Description: \(desc)"
+        weatherImageView.image = weatherItem?.weather?.first?.depictImage
+        weatherImageView.accessibilityTraits = .image
+        weatherImageView.isAccessibilityElement = true
+        weatherImageView.accessibilityLabel =  "Weather is mainly \(weatherItem?.weather?.first?.main ?? "")"
     }
 }

@@ -14,6 +14,7 @@ class WeatherViewController: UIViewController {
     private let model = WeatherViewModel()
     private let disposeBag = DisposeBag()
     
+    @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
@@ -21,6 +22,7 @@ class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        headerLabel.useDynamicFont(forTextStyle: .headline)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.tableFooterView = UIView(frame: .zero)
     }
@@ -37,7 +39,9 @@ class WeatherViewController: UIViewController {
                         self?.weatherForecast = weatherForecast
                         self?.tableView.reloadData()
                     case .failure(let error):
-                        print("Fetch weather forecast error: \(error)")
+                        let alert = UIAlertController(title: "Oops", message: "\(error)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                        self?.present(alert, animated: true, completion: nil)
                     }
                 }
                 .disposed(by: disposeBag)
@@ -84,7 +88,7 @@ extension WeatherViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.fetchWeatherData), object: nil)
-        perform(#selector(self.fetchWeatherData), with: nil, afterDelay: 0.2)
+        perform(#selector(self.fetchWeatherData), with: nil, afterDelay: 0.4)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

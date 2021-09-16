@@ -49,7 +49,6 @@ class WeatherViewModel {
             .flatMap { response -> Single<WeatherForecast?> in
                 do {
                     let weatherForecast = try JSONDecoder().decode(WeatherForecast.self, from: response.data)
-                    print(try? response.mapJSON())
                     try CacheManager.shared.cacheWeatherForecastData(response.data, withCity: city, numberOfForecaseDay: Constants.numberOfForecaseDay, units: Constants.units)
                     return Single.just(weatherForecast)
                 } catch {

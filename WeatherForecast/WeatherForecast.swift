@@ -5,7 +5,7 @@
 //  Created by Minh Nguyen on 15/09/2021.
 //
 
-import Foundation
+import UIKit
 
 struct WeatherForecast: Codable {
     
@@ -40,4 +40,29 @@ struct WeatherTemperature: Codable {
 struct WeatherInfo: Codable {
     
     var description: String?
+    var main: String?
+    
+    var type: WeatherType? {
+        if let main = main, !main.isEmpty {
+            return WeatherType(rawValue: main)
+        }
+        return .clear
+    }
+    
+    var depictImage: UIImage {
+        switch type {
+        case .clouds:
+            return UIImage(systemName: "cloud.sun")!
+        case .rain:
+            return UIImage(systemName: "cloud.rain")!
+        default:
+            return UIImage(systemName: "sun.max")!
+        }
+    }
+}
+
+enum WeatherType: String {
+    case rain = "Rain"
+    case clouds = "Clouds"
+    case clear = "Clear"
 }
