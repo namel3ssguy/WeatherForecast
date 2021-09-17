@@ -113,4 +113,30 @@ class WeatherViewModelTests: XCTestCase {
             }
             .disposed(by: disposeBag)
     }
+    
+    /**
+     Test getting weather must not get the data when city length is less than 3.
+     */
+    func testGetWeatherForecastInfo_NotFetchDataWhenCityLengthLessThan3() {
+        let city = "la"
+        viewModel.getWeatherForecastInfo(for: city)
+        Thread.sleep(forTimeInterval: 0.3)
+        XCTAssertNil(try viewModel.weatherForecast.value(), "getWeatherForecastInfo getting data when city length is less than 3")
+    }
+    
+    /**
+     Test getting weather must not get the data when city length is equal or greater than 3.
+     */
+    func testGetWeatherForecastInfo_FetchDataWhenCityLengthGreaterThanOrEqual3() {
+        let city = "123"
+        let path = CacheManager.weatherForecastPath(withCity: city, numberOfForecaseDay: WeatherViewModel.Constants.numberOfForecaseDay, units: WeatherViewModel.Constants.units)
+        defer {
+            if FileManager.default.fileExists(atPath: path) {
+                try? FileManager.default.removeItem(at: URL(fileURLWithPath: path))
+            }
+        }
+        viewModel.getWeatherForecastInfo(for: city)
+        Thread.sleep(forTimeInterval: 0.3)
+        XCTAssertNotNil(try viewModel.weatherForecast.value(), "getWeatherForecastInfo not getting data when city length is greater or equal 3")
+    }
 }

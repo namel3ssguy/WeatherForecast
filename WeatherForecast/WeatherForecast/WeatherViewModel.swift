@@ -12,16 +12,39 @@ import RxSwift
 
 class WeatherViewModel {
     
-    var provider: MoyaProvider<WeatherTarget>
+    private let disposeBag = DisposeBag()
+    
+    private var provider: MoyaProvider<WeatherTarget>
     
     init(provider: MoyaProvider<WeatherTarget> = MoyaProvider<WeatherTarget>()) {
         self.provider = provider
     }
     
+    var weatherForecast: BehaviorSubject<WeatherForecast?> = BehaviorSubject(value: nil)
+    
+    var error: BehaviorSubject<Error?> = BehaviorSubject(value: nil)
+    
     struct Constants {
         static let numberOfForecaseDay = 7
         static let units = "metric"
         static let appId = "60c6fbeb4b93ac653c492ba806fc346d"
+        static let validCityLength = 3
+    }
+    
+    func getWeatherForecastInfo(for city: String) {
+        if city.trimmingCharacters(in: .whitespacesAndNewlines).count >= Constants.validCityLength {
+            fetchWeatherForecast(for: city)
+                .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .utility))
+                .subscribe { [weak self] event in
+                    switch event {
+                    case .success(let weatherForecast):
+                        self?.weatherForecast.onNext(weatherForecast)
+                    case .failure(let error):
+                        self?.error.onNext(error)
+                    }
+                }
+                .disposed(by: disposeBag)
+        }
     }
     
     /**

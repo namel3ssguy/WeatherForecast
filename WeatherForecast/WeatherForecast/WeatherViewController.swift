@@ -11,7 +11,7 @@ import RxMoya
 
 class WeatherViewController: UIViewController {
     
-    private let model = WeatherViewModel()
+    private let viewModel = WeatherViewModel()
     private let disposeBag = DisposeBag()
     
     @IBOutlet weak var headerLabel: UILabel!
@@ -25,26 +25,31 @@ class WeatherViewController: UIViewController {
         headerLabel.useDynamicFont(forTextStyle: .headline)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.tableFooterView = UIView(frame: .zero)
+        bindData()
+    }
+    
+    func bindData() {
+        viewModel.weatherForecast
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] weatherForecast in
+            self?.weatherForecast = weatherForecast
+            self?.tableView.reloadData()
+        }).disposed(by: disposeBag)
+        
+        viewModel.error
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] error in
+            guard let error = error else { return }
+            let alert = UIAlertController(title: "Oops", message: "\(error)", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self?.present(alert, animated: true, completion: nil)
+        }).disposed(by: disposeBag)
     }
     
     @objc
     func fetchWeatherData() {
-        if let city = searchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines), city.count >= 3 {
-            model.fetchWeatherForecast(for: city)
-                .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .utility))
-                .observe(on: MainScheduler.instance)
-                .subscribe { [weak self] event in
-                    switch event {
-                    case .success(let weatherForecast):
-                        self?.weatherForecast = weatherForecast
-                        self?.tableView.reloadData()
-                    case .failure(let error):
-                        let alert = UIAlertController(title: "Oops", message: "\(error)", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                        self?.present(alert, animated: true, completion: nil)
-                    }
-                }
-                .disposed(by: disposeBag)
+        if let city = searchBar.text {
+            viewModel.getWeatherForecastInfo(for: city)
         }
     }
 }
@@ -62,12 +67,6 @@ extension WeatherViewController: UITableViewDataSource {
         cell.weatherItem = weatherForecast?.list?[indexPath.row]
         return cell
     }
-}
-
-// MARK: UITableViewDelegate
-
-extension WeatherViewController: UITableViewDelegate {
-    
 }
 
 // MARK: UISearchBarDelegate

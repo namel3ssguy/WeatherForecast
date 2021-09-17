@@ -29,7 +29,6 @@ class WeatherForecastCell: UITableViewCell {
         pressureLabel.useDynamicFont(forTextStyle: .body)
         humidityLabel.useDynamicFont(forTextStyle: .body)
         descLabel.useDynamicFont(forTextStyle: .body)
-        
     }
     
     private func updateData() {
